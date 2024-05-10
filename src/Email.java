@@ -1,52 +1,41 @@
+
 public class Email {
+    private boolean isNew;
+    private String sender, receiver;
+    private String subject, mainbody;
 
-    private final String sender;
-    private final String receiver;
-    private final String subject;
-    private final String mainBody;
-    private  boolean UnRead;
-
-
-    public Email(String sender, String receiver, String subject, String mainBody) {
-        if (sender == null || sender.isEmpty() ||
-                receiver == null || receiver.isEmpty() ||
-                subject == null || subject.isEmpty() ||
-                mainBody == null || mainBody.isEmpty()) {
-            throw new IllegalArgumentException("Sender, receiver, subject, and main body must not be null or empty.");
-        }
+    public Email(String sender, String receiver, String subject, String mainbody){
+        this.isNew = true;
         this.sender = sender;
         this.receiver = receiver;
         this.subject = subject;
-        this.mainBody = mainBody;
-        this.UnRead = true;
+        this.mainbody = mainbody;
     }
 
-
-    public String getSender() {
-        return sender;
+    boolean getNew(){
+        return isNew;
     }
 
-    public String getReceiver() {
-        return receiver;
-    }
-
-    public String getSubject() {
+    String getSubject(){
         return subject;
     }
 
-    public boolean getUnRead() {
-        return UnRead;
+    String getSender(){
+        return sender;
     }
 
-    void Read() {
-        UnRead = false;
+    /**
+     * Toggles the corresponding boolean variable.
+     */
+    void makeSeen(){
+        isNew = false;
     }
 
     @Override
-    public String toString() {
-        return  "From: " + sender + "\n"+
-                "To: " + receiver + "\n"+
-                "Subject: " + subject + "\n\n"+
-                "Message" + mainBody + "\n\n\n";
+    public String toString(){
+        return "Sender: " + sender + "\n" +
+                "Receiver: " + receiver + "\n" +
+                "Subject: " + subject + "\n" +
+                "Main Body: " + mainbody + "\n";
     }
 }
