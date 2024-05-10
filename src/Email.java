@@ -24,9 +24,6 @@ public class Email {
         return sender;
     }
 
-    /**
-     * Toggles the corresponding boolean variable.
-     */
     void makeSeen(){
         isNew = false;
     }

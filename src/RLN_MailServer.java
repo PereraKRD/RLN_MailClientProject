@@ -123,32 +123,4 @@ public class RLN_MailServer{
 }
 
 
-//    public static void main(String[] args) throws IOException {
-//
-//        int port = 7777;
-//        System.out.println("\n\n\t\t--------## WELCOME TO RLN MAIL ##--------\t\t");
-//        System.out.println("\t\t=========================================\t\t \n\n");
-//
-//        ServerSocket serverSocket = new ServerSocket(port);
-//
-//        RLN_MailServer server = new RLN_MailServer();
-//        System.out.println("RLN Mail Server started on port : " + port);
-//        server.populateAccounts();
-//
-//        Socket client;
-//        try {
-//            while (true){
-//                client = serverSocket.accept();
-//                DataInputStream dis = new DataInputStream(client.getInputStream());
-//                DataOutputStream dos = new DataOutputStream(client.getOutputStream());
-//                Thread th = new ServerThread(server,dis,dos);
-//                th.start();
-//
-//            }
-//        } finally {
-//            serverSocket.close();
-//        }
-//    }
-
-
 
