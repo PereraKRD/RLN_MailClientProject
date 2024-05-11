@@ -2,7 +2,6 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.Scanner;
 
 
 public class RLN_MailServer{
@@ -53,7 +52,6 @@ public class RLN_MailServer{
         register("ryan@rln.com", "123456");
         register("lasith@rln.com", "123456");
         register("nithil@rln.com", "123456");
-        register("admin@rln.com", "admin32");
 
         newEmail("ryan@rln.com", "lasith@rln.com", "Spam", "Hey there!\nThis is spam!\n");
         newEmail("ryan@rln.com", "admin@rln.com", "Spam", "Hey there!\nThis is spam!\n");
@@ -67,11 +65,6 @@ public class RLN_MailServer{
         newEmail("nithil@rln.com", "admin@rln.com", "Spam", "Hey there!\nThis is spam!\n");
         newEmail("nithil@rln.com", "ryan@rln.com", "Spam", "Hey there!\nThis is spam!\n");
 
-        newEmail("admin@rln.com", "lasith@rln.com", "!Important!", "I hope to pass Signals " +
-                "and Systems this semester!\nI also hope to pass Digital Communications...\nThat's all folks!\n" +
-                "Yours sincerely,\n Ryan Perera 4113");
-        newEmail("admin@rln.com", "nithil@rln.com", "DO NOT OPEN", "Gotcha!\n:P :P :P :P\n");
-        newEmail("admin@rln.com", "admin@rln.com", "Passwords", "No passwords in here, lol\n");
     }
 
     boolean register(String username, String password){
