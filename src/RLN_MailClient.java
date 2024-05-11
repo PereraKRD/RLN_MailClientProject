@@ -37,11 +37,11 @@ public class RLN_MailClient extends JFrame {
         });
 
         // Set up the frame
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().add(mainPanel);
         pack();
         setLocationRelativeTo(null); // Center the frame
         setVisible(true);
+
     }
 
     private void connectToServer() {
@@ -49,10 +49,11 @@ public class RLN_MailClient extends JFrame {
         try {
             InetAddress ip = InetAddress.getLocalHost();
             Socket socket = new Socket(ip, Integer.parseInt(port));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            DataInputStream dis = new DataInputStream(socket.getInputStream());
+            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
             popup("Welcome to RLN Mail Service!! :)");
-            guestSession(socket, in, out);
+            loginInterface(socket, dis, dos);
+            dispose();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Couldn't connect to server due to a fatal error. Please check connection to server and try again.", "Connection Error", JOptionPane.ERROR_MESSAGE);
             System.out.println("A fatal error occurred.");
@@ -64,9 +65,9 @@ public class RLN_MailClient extends JFrame {
         JOptionPane.showMessageDialog(null, message, "Message", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private static void guestSession(Socket socket, BufferedReader dis, PrintWriter dos) {
+    private static void loginInterface(Socket socket, DataInputStream in, DataOutputStream out) {
         JFrame frame = new JFrame("|| Login Page ||");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //close button
         frame.setSize(400, 300);
         frame.setLocationRelativeTo(null); // Center the frame
 
@@ -77,7 +78,7 @@ public class RLN_MailClient extends JFrame {
 
         JPanel inputPanel = new JPanel(new GridLayout(4, 2, 5, 5));
         JTextField usernameField = new JTextField();
-        JTextField passwordField = new JTextField();
+        JPasswordField passwordField = new JPasswordField();
         JButton signInButton = new JButton("Signup");
         JButton loginButton = new JButton("Login");
         JButton exitButton = new JButton("Exit");
@@ -100,12 +101,12 @@ public class RLN_MailClient extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    dos.println("signin");
-                    dos.println(usernameField.getText());
-                    dos.println(passwordField.getText());
-                    String response = dis.readLine();
+                    out.writeUTF("signin");
+                    out.writeUTF(usernameField.getText());
+                    out.writeUTF(passwordField.getText());
+                    String response = in.readUTF();
                     if (response.equalsIgnoreCase("ok")) {
-                        messageArea.append("User " + usernameField.getText() + " registered successfully !!\n");
+                        messageArea.append("User " + usernameField.getText().toLowerCase() + " registered successfully !!\n");
                         usernameField.setText("");
                         passwordField.setText("");
                     } else {
@@ -122,16 +123,16 @@ public class RLN_MailClient extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    dos.println("login");
-                    dos.println(usernameField.getText());
-                    dos.println(passwordField.getText());
-                    String response = dis.readLine();
+                    out.writeUTF("login");
+                    out.writeUTF(usernameField.getText());
+                    out.writeUTF(passwordField.getText());
+                    String response = in.readUTF();
                     if (response.equalsIgnoreCase("ok")) {
-                        userSession(usernameField.getText(), socket, dis, dos);
+                        userInterface(usernameField.getText(), socket, in, out);
                         usernameField.setText("");
                         passwordField.setText("");
                         messageArea.setText("");
-                        messageArea.append("Welcome Again to RLN Mail Service !!\n");
+                        frame.dispose();
                     } else {
                         messageArea.append("Login failed. Please check your credentials.\n");
                     }
@@ -145,15 +146,15 @@ public class RLN_MailClient extends JFrame {
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                exit(socket, dos);
+                exit(socket, out);
                 frame.dispose(); // Close the frame
             }
         });
     }
 
-    private static void exit(Socket socket, PrintWriter dos) {
+    private static void exit(Socket socket, DataOutputStream dos) {
         try {
-            dos.println("exit");
+            dos.writeUTF("exit");
             socket.close();
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Couldn't terminate connection to server properly.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -162,14 +163,14 @@ public class RLN_MailClient extends JFrame {
         System.exit(0);
     }
 
-    private static void userSession(String username, Socket socket, BufferedReader dis, PrintWriter dos) {
-        JFrame frame = new JFrame("Welcome to " + username + "'s Portal");
+    private static void userInterface(String username, Socket socket, DataInputStream dis, DataOutputStream dos) {
+        JFrame frame = new JFrame("Welcome to " + username.toLowerCase() + "'s Portal");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null); // Center the frame
 
         JPanel panel = new JPanel(new BorderLayout());
-        JTextArea messageArea = new JTextArea("Hello , " + username + ",\nYou can manage your emails here.\n");
+        JTextArea messageArea = new JTextArea("Hello , " + username.toLowerCase() + ",\nYou can manage your emails here.\n");
         messageArea.setEditable(false);
         panel.add(new JScrollPane(messageArea), BorderLayout.CENTER);
 
@@ -198,7 +199,6 @@ public class RLN_MailClient extends JFrame {
         inputPanel.add(exitButton);
 
         panel.add(inputPanel, BorderLayout.SOUTH);
-
         frame.add(panel);
         frame.setVisible(true);
 
@@ -206,11 +206,11 @@ public class RLN_MailClient extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    dos.println("newemail");
-                    dos.println(receiverField.getText());
-                    dos.println(subjectField.getText());
-                    dos.println(mainBodyArea.getText());
-                    String response = dis.readLine();
+                    dos.writeUTF("newemail");
+                    dos.writeUTF(receiverField.getText());
+                    dos.writeUTF(subjectField.getText());
+                    dos.writeUTF(mainBodyArea.getText());
+                    String response = dis.readUTF();
                     if (response.equalsIgnoreCase("ok")) {
                         messageArea.append("Email was sent successfully!\n");
                         receiverField.setText("");
@@ -220,7 +220,8 @@ public class RLN_MailClient extends JFrame {
                         messageArea.append("There was an error while sending the email. Please try again.\n");
                     }
                 } catch (IOException ex) {
-                    ex.printStackTrace(); // Handle the exception properly
+                    System.out.println("A fatal error occurred.");
+                    System.exit(1);
                 }
             }
         });
@@ -229,8 +230,8 @@ public class RLN_MailClient extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    dos.println("showemails");
-                    String response = dis.readLine();
+                    dos.writeUTF("showemails");
+                    String response = dis.readUTF();
                     if (response.isEmpty()) {
                         messageArea.append("\nThere are no emails yet.\n");
                     } else {
@@ -247,10 +248,10 @@ public class RLN_MailClient extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    dos.println("reademail");
+                    dos.writeUTF("reademail");
                     String index = JOptionPane.showInputDialog("Enter the email ID to be read:");
-                    dos.println(index);
-                    String response = dis.readLine();
+                    dos.writeUTF(index);
+                    String response = dis.readUTF();
                     if (!response.isEmpty()) {
                         messageArea.append(response + "\n");
                     } else {
@@ -267,10 +268,10 @@ public class RLN_MailClient extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    dos.println("deleteemail");
+                    dos.writeUTF("deleteemail");
                     String index = JOptionPane.showInputDialog("Enter the email ID to be deleted:");
-                    dos.println(index);
-                    String response = dis.readLine();
+                    dos.writeUTF(index);
+                    String response = dis.readUTF();
                     if (response.equalsIgnoreCase("ok")) {
                         messageArea.append("Email deleted successfully!\n");
                     } else {
@@ -286,8 +287,14 @@ public class RLN_MailClient extends JFrame {
         logoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dos.println("logout");
-                frame.dispose(); // Close the user session window
+                try {
+                    dos.writeUTF("logout");
+                } catch (IOException ex) {
+                    System.out.println("A fatal error occurred.");
+                    System.exit(1);
+                }
+                frame.dispose();
+                loginInterface(socket, dis, dos);// Close the user session window
             }
         });
 

@@ -5,10 +5,10 @@ class ServerThread extends Thread{
     private static int clientCount = 0;
     final private int clientId;
     final private RLN_MailServer server;
-    final private PrintWriter dos;
-    final private BufferedReader dis;
+    final private DataOutputStream dos;
+    final private DataInputStream dis;
 
-    ServerThread(RLN_MailServer server, BufferedReader dis, PrintWriter dos){
+    ServerThread(RLN_MailServer server, DataInputStream dis, DataOutputStream dos){
         this.server = server;
         this.dis = dis;
         this.dos = dos;
@@ -25,7 +25,7 @@ class ServerThread extends Thread{
 
             while(connected){
 
-                request = dis.readLine();
+                request = dis.readUTF();
 
                 // Exit
                 if(request.equalsIgnoreCase("exit")){
@@ -36,28 +36,28 @@ class ServerThread extends Thread{
                 // Log-In
                 else if(request.equalsIgnoreCase("login")){
                     // Get data
-                    String username = dis.readLine();
-                    String password = dis.readLine();
+                    String username = dis.readUTF();
+                    String password = dis.readUTF();
 
                     // Log user in
                     if(server.login(username, password)){
                         // Accept client
-                        dos.println("ok");
+                        dos.writeUTF("ok");
                         boolean logged = true;
 
                         // Logged-In Session
                         while(logged){
 
                             // Fetch request
-                            request = dis.readLine();
+                            request = dis.readUTF();
 
                             // New Email
                             if(request.equalsIgnoreCase("newemail")){
 
                                 // Get Data
-                                String receiver = dis.readLine();
-                                String subject = dis.readLine();
-                                String mainbody = dis.readLine();
+                                String receiver = dis.readUTF();
+                                String subject = dis.readUTF();
+                                String mainbody = dis.readUTF();
 
                                 // Send Email
                                 if(server.newEmail(username, receiver, subject, mainbody)){
@@ -67,31 +67,31 @@ class ServerThread extends Thread{
                                 }
 
                                 // Inform User
-                                dos.println(response);
+                                dos.writeUTF(response);
                             }
 
                             // Represent Emails
                             else if(request.equalsIgnoreCase("showemails")){
                                 response = server.showEmails(username);
-                                dos.println(response);
+                                dos.writeUTF(response);
                             }
 
                             // Read Email
                             else if(request.equalsIgnoreCase("reademail")){
                                 // Fetch index
-                                request = dis.readLine();
+                                request = dis.readUTF();
 
                                 // Retrieve e-mail
                                 response = server.readEmail(username, Integer.parseInt(request));
 
                                 // Return e-mail
-                                dos.println(response);
+                                dos.writeUTF(response);
                             }
 
                             // Delete Email
                             else if(request.equalsIgnoreCase("deleteemail")){
                                 // Fetch of e-mail
-                                request = dis.readLine();
+                                request = dis.readUTF();
 
                                 // Retrieve e-mail
                                 if(server.deleteEmail(username, Integer.parseInt(request))){
@@ -100,7 +100,7 @@ class ServerThread extends Thread{
                                     response = "nok";
                                 }
 
-                                dos.println(response);
+                                dos.writeUTF(response);
                             }
 
                             // Log Out
@@ -115,15 +115,15 @@ class ServerThread extends Thread{
                             }
                         }
                     } else {
-                        dos.println("nok");
+                        dos.writeUTF("nok");
                     }
                 }
 
                 // Sign-In
                 else if(request.equalsIgnoreCase("signin")){
                     // Get data
-                    String username = dis.readLine();
-                    String password = dis.readLine();
+                    String username = dis.readUTF();
+                    String password = dis.readUTF();
 
                     // Register user
                     if(server.register(username, password)){
@@ -133,7 +133,7 @@ class ServerThread extends Thread{
                     }
 
                     // Inform client
-                    dos.println(response);
+                    dos.writeUTF(response);
                 }
             }
 

@@ -36,8 +36,8 @@ public class RLN_MailServer{
         while(true) {
             try {
                 socket = serverSocket.accept();
-                PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                DataInputStream in = new DataInputStream(socket.getInputStream());
                 Thread thread = new ServerThread(server, in, out);
                 thread.start();
 
@@ -50,10 +50,10 @@ public class RLN_MailServer{
 
     private void populateAccounts() {
 
-        register("ryan@rln.com", "1234");
-        register("lasith@rln.com", "1234");
-        register("nithil@rln.com", "1234");
-        register("admin@rln.com", "admin");
+        register("ryan@rln.com", "123456");
+        register("lasith@rln.com", "123456");
+        register("nithil@rln.com", "123456");
+        register("admin@rln.com", "admin32");
 
         newEmail("ryan@rln.com", "lasith@rln.com", "Spam", "Hey there!\nThis is spam!\n");
         newEmail("ryan@rln.com", "admin@rln.com", "Spam", "Hey there!\nThis is spam!\n");
@@ -75,23 +75,32 @@ public class RLN_MailServer{
     }
 
     boolean register(String username, String password){
-        if(!accounts.containsKey(username)) {
-            accounts.put(username, new Account(username, password));
+
+        if(!accounts.containsKey(username) && isValidEmail(username) && password.length() >= 6) {
+            accounts.put(username.toLowerCase(), new Account(username, password));
             return true;
         }
         return false;
     }
 
+    boolean isValidEmail(String email) {
+        // Regular expression for email validation
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        return email.matches(emailRegex);
+    }
+
     boolean login(String username, String password){
+        username = username.toLowerCase();
         if(accounts.get(username) != null){
             return password.equals(accounts.get(username).getPassword());
         }
         return false;
     }
 
-    boolean newEmail(String sender, String receiver, String subject, String mainbody){
+
+    boolean newEmail(String sender, String receiver, String subject, String mainBody){
         if(accounts.containsKey(sender) && accounts.containsKey(receiver)){
-            Email email = new Email(sender, receiver, subject, mainbody);
+            Email email = new Email(sender, receiver, subject, mainBody);
             return accounts.get(receiver).submitEmail(email);
         }
         return false;
@@ -110,7 +119,7 @@ public class RLN_MailServer{
         if(accounts.containsKey(username)){
             Email email = accounts.get(username).getEmail(id);
             if(email != null){
-                str = "\n" + email.toString();
+                str = "\n" + email.toStringFormat();
                 email.Read();
             }
         }
