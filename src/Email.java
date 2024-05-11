@@ -24,7 +24,7 @@ public class Email {
         return sender;
     }
 
-    void makeSeen(){
+    void Read(){
         isNew = false;
     }
 

@@ -54,10 +54,10 @@ public class Account {
             str.append("[").append((email.getNew()?"*":" ")).append("]");
             str.append("\t");
             // ID
-            str.append("#").append(i++);
+            str.append("ID: ").append(i++);
             str.append("\t");
             // Sender
-            str.append("from:").append(email.getSender());
+            str.append("from: ").append(email.getSender());
             str.append("\t");
             // Subject
             str.append(email.getSubject()).append("\n");

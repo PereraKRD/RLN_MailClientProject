@@ -4,7 +4,7 @@ import java.io.IOException;
 
 
 class ServerThread extends Thread{
-    private static int sessionCount = 0;
+    private static int clientCount = 0;
     final private int sid;
     final private RLN_MailServer server;
     final private DataInputStream dis;
@@ -14,27 +14,25 @@ class ServerThread extends Thread{
         this.server = server;
         this.dis = dis;
         this.dos = dos;
-        sid = sessionCount++;
+        sid = clientCount++;
     }
 
     @Override
     public void run(){
-        System.out.println("Session #" + sid + " has started.");
+        System.out.println("Client " + sid + " connected.");
         try {
             String request;
             String response;
             boolean connected = true;
 
-            // Guest Session
             while(connected){
 
-                // Fetch request
                 request = dis.readUTF();
 
                 // Exit
                 if(request.equalsIgnoreCase("exit")){
                     connected = false;
-                    System.out.println("Session #" + sid + " has been terminated.");
+                    System.out.println("Client " + sid + " disconnected.");
                 }
 
                 // Log-In
@@ -82,29 +80,28 @@ class ServerThread extends Thread{
 
                             // Read Email
                             else if(request.equalsIgnoreCase("reademail")){
-                                // Fetch index of e-mail
+                                // Fetch index
                                 request = dis.readUTF();
 
-                                // Retrieve requested e-mail
+                                // Retrieve e-mail
                                 response = server.readEmail(username, Integer.parseInt(request));
 
-                                // Return requested e-mail
+                                // Return e-mail
                                 dos.writeUTF(response);
                             }
 
                             // Delete Email
                             else if(request.equalsIgnoreCase("deleteemail")){
-                                // Fetch index of e-mail
+                                // Fetch of e-mail
                                 request = dis.readUTF();
 
-                                // Retrieve requested e-mail
+                                // Retrieve e-mail
                                 if(server.deleteEmail(username, Integer.parseInt(request))){
                                     response = "ok";
                                 } else {
                                     response = "nok";
                                 }
-
-                                // Return status
+                                
                                 dos.writeUTF(response);
                             }
 
@@ -116,7 +113,7 @@ class ServerThread extends Thread{
                             // Exit
                             else if(request.equalsIgnoreCase("exit")){
                                 logged = connected = false;
-                                System.out.println("Session #" + sid + " has been terminated.");
+                                System.out.println("Client " + sid + " disconnected.");
                             }
                         }
                     } else {
@@ -144,7 +141,7 @@ class ServerThread extends Thread{
 
         } catch (IOException e){
             System.out.println("An error has occurred while communicating with a client.");
-            System.out.println("Session #" + sid + " has been lost.");
+            System.out.println("Client " + sid + " lost connection.");
         }
     }
 }
