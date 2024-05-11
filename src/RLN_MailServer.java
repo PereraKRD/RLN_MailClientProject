@@ -84,7 +84,7 @@ public class RLN_MailServer{
     }
 
     boolean isValidEmail(String email) {
-        // Regular expression for email validation
+        // Regex for email validation
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         return email.matches(emailRegex);
     }

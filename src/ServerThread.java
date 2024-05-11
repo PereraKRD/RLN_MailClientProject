@@ -35,38 +35,31 @@ class ServerThread extends Thread{
 
                 // Log-In
                 else if(request.equalsIgnoreCase("login")){
-                    // Get data
                     String username = dis.readUTF();
                     String password = dis.readUTF();
 
-                    // Log user in
                     if(server.login(username, password)){
-                        // Accept client
                         dos.writeUTF("ok");
                         boolean logged = true;
 
-                        // Logged-In Session
                         while(logged){
 
-                            // Fetch request
                             request = dis.readUTF();
 
                             // New Email
                             if(request.equalsIgnoreCase("newemail")){
 
-                                // Get Data
                                 String receiver = dis.readUTF();
                                 String subject = dis.readUTF();
                                 String mainbody = dis.readUTF();
 
-                                // Send Email
                                 if(server.newEmail(username, receiver, subject, mainbody)){
                                     response = "ok";
                                 } else {
                                     response = "nok";
                                 }
 
-                                // Inform User
+
                                 dos.writeUTF(response);
                             }
 
@@ -78,22 +71,18 @@ class ServerThread extends Thread{
 
                             // Read Email
                             else if(request.equalsIgnoreCase("reademail")){
-                                // Fetch index
+
                                 request = dis.readUTF();
-
-                                // Retrieve e-mail
                                 response = server.readEmail(username, Integer.parseInt(request));
-
-                                // Return e-mail
                                 dos.writeUTF(response);
                             }
 
                             // Delete Email
                             else if(request.equalsIgnoreCase("deleteemail")){
-                                // Fetch of e-mail
+
                                 request = dis.readUTF();
 
-                                // Retrieve e-mail
+
                                 if(server.deleteEmail(username, Integer.parseInt(request))){
                                     response = "ok";
                                 } else {
@@ -121,18 +110,17 @@ class ServerThread extends Thread{
 
                 // Sign-In
                 else if(request.equalsIgnoreCase("signin")){
-                    // Get data
+
                     String username = dis.readUTF();
                     String password = dis.readUTF();
 
-                    // Register user
+
                     if(server.register(username, password)){
                         response = "ok";
                     } else {
                         response = "nok";
                     }
 
-                    // Inform client
                     dos.writeUTF(response);
                 }
             }

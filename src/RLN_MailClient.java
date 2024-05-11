@@ -16,19 +16,16 @@ public class RLN_MailClient extends JFrame {
     public RLN_MailClient() {
         super("MailClient");
 
-        // Initialize components
         portField = new JTextField(10);
         connectButton = new JButton("Connect");
 
-        // Set layout
         JPanel mainPanel = new JPanel(new BorderLayout());
         JPanel inputPanel = new JPanel();
-        inputPanel.add(new JLabel("Enter the MailServer's Port:"));
+        inputPanel.add(new JLabel("Enter the RLN MailServer's Port:"));
         inputPanel.add(portField);
         inputPanel.add(connectButton);
         mainPanel.add(inputPanel, BorderLayout.CENTER);
 
-        // Add listeners
         connectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -36,7 +33,6 @@ public class RLN_MailClient extends JFrame {
             }
         });
 
-        // Set up the frame
         getContentPane().add(mainPanel);
         pack();
         setLocationRelativeTo(null); // Center the frame
@@ -147,7 +143,7 @@ public class RLN_MailClient extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 exit(socket, out);
-                frame.dispose(); // Close the frame
+                frame.dispose();
             }
         });
     }
@@ -167,7 +163,7 @@ public class RLN_MailClient extends JFrame {
         JFrame frame = new JFrame("Welcome to " + username.toLowerCase() + "'s Portal");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
-        frame.setLocationRelativeTo(null); // Center the frame
+        frame.setLocationRelativeTo(null);
 
         JPanel panel = new JPanel(new BorderLayout());
         JTextArea messageArea = new JTextArea("Hello , " + username.toLowerCase() + ",\nYou can manage your emails here.\n");

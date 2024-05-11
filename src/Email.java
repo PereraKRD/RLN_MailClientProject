@@ -31,7 +31,7 @@ public class Email {
     public String toStringFormat(){
         return "Sender: " + sender + "\n" +
                 "Receiver: " + receiver + "\n" +
-                "Subject: " + subject + "\n" +
+                "Subject: " + subject + "\n\n" +
                 "Main Body: " + mainbody + "\n";
     }
 }

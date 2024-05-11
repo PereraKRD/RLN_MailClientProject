@@ -50,16 +50,16 @@ public class Account {
         int i = 0;
         StringBuilder str = new StringBuilder();
         for(Email email:mailbox){
-            // Status
+
             str.append("[").append((email.getNew()?"*":" ")).append("]");
             str.append("\t");
-            // ID
+
             str.append("ID: ").append(i++);
             str.append("\t");
-            // Sender
+
             str.append("from: ").append(email.getSender());
             str.append("\t");
-            // Subject
+
             str.append(email.getSubject()).append("\n");
         }
         return str.toString();
