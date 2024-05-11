@@ -1,25 +1,23 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 
 class ServerThread extends Thread{
     private static int clientCount = 0;
-    final private int sid;
+    final private int clientId;
     final private RLN_MailServer server;
-    final private DataInputStream dis;
-    final private DataOutputStream dos;
+    final private PrintWriter dos;
+    final private BufferedReader dis;
 
-    ServerThread(RLN_MailServer server, DataInputStream dis, DataOutputStream dos){
+    ServerThread(RLN_MailServer server, BufferedReader dis, PrintWriter dos){
         this.server = server;
         this.dis = dis;
         this.dos = dos;
-        sid = clientCount++;
+        clientId = clientCount++;
     }
 
     @Override
     public void run(){
-        System.out.println("Client " + sid + " connected.");
+        System.out.println("Client " + clientId + " connected.");
         try {
             String request;
             String response;
@@ -27,39 +25,39 @@ class ServerThread extends Thread{
 
             while(connected){
 
-                request = dis.readUTF();
+                request = dis.readLine();
 
                 // Exit
                 if(request.equalsIgnoreCase("exit")){
                     connected = false;
-                    System.out.println("Client " + sid + " disconnected.");
+                    System.out.println("Client " + clientId + " disconnected.");
                 }
 
                 // Log-In
                 else if(request.equalsIgnoreCase("login")){
                     // Get data
-                    String username = dis.readUTF();
-                    String password = dis.readUTF();
+                    String username = dis.readLine();
+                    String password = dis.readLine();
 
                     // Log user in
                     if(server.login(username, password)){
                         // Accept client
-                        dos.writeUTF("ok");
+                        dos.println("ok");
                         boolean logged = true;
 
                         // Logged-In Session
                         while(logged){
 
                             // Fetch request
-                            request = dis.readUTF();
+                            request = dis.readLine();
 
                             // New Email
                             if(request.equalsIgnoreCase("newemail")){
 
                                 // Get Data
-                                String receiver = dis.readUTF();
-                                String subject = dis.readUTF();
-                                String mainbody = dis.readUTF();
+                                String receiver = dis.readLine();
+                                String subject = dis.readLine();
+                                String mainbody = dis.readLine();
 
                                 // Send Email
                                 if(server.newEmail(username, receiver, subject, mainbody)){
@@ -69,31 +67,31 @@ class ServerThread extends Thread{
                                 }
 
                                 // Inform User
-                                dos.writeUTF(response);
+                                dos.println(response);
                             }
 
                             // Represent Emails
                             else if(request.equalsIgnoreCase("showemails")){
                                 response = server.showEmails(username);
-                                dos.writeUTF(response);
+                                dos.println(response);
                             }
 
                             // Read Email
                             else if(request.equalsIgnoreCase("reademail")){
                                 // Fetch index
-                                request = dis.readUTF();
+                                request = dis.readLine();
 
                                 // Retrieve e-mail
                                 response = server.readEmail(username, Integer.parseInt(request));
 
                                 // Return e-mail
-                                dos.writeUTF(response);
+                                dos.println(response);
                             }
 
                             // Delete Email
                             else if(request.equalsIgnoreCase("deleteemail")){
                                 // Fetch of e-mail
-                                request = dis.readUTF();
+                                request = dis.readLine();
 
                                 // Retrieve e-mail
                                 if(server.deleteEmail(username, Integer.parseInt(request))){
@@ -101,8 +99,8 @@ class ServerThread extends Thread{
                                 } else {
                                     response = "nok";
                                 }
-                                
-                                dos.writeUTF(response);
+
+                                dos.println(response);
                             }
 
                             // Log Out
@@ -113,19 +111,19 @@ class ServerThread extends Thread{
                             // Exit
                             else if(request.equalsIgnoreCase("exit")){
                                 logged = connected = false;
-                                System.out.println("Client " + sid + " disconnected.");
+                                System.out.println("Client " + clientId + " disconnected.");
                             }
                         }
                     } else {
-                        dos.writeUTF("nok");
+                        dos.println("nok");
                     }
                 }
 
                 // Sign-In
                 else if(request.equalsIgnoreCase("signin")){
                     // Get data
-                    String username = dis.readUTF();
-                    String password = dis.readUTF();
+                    String username = dis.readLine();
+                    String password = dis.readLine();
 
                     // Register user
                     if(server.register(username, password)){
@@ -135,13 +133,13 @@ class ServerThread extends Thread{
                     }
 
                     // Inform client
-                    dos.writeUTF(response);
+                    dos.println(response);
                 }
             }
 
         } catch (IOException e){
             System.out.println("An error has occurred while communicating with a client.");
-            System.out.println("Client " + sid + " lost connection.");
+            System.out.println("Client " + clientId + " lost connection.");
         }
     }
 }

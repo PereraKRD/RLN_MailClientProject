@@ -28,20 +28,11 @@ public class MailClient {
         }
     }
 
-    /**
-     * Simple substitute (alias) to System.out.println().
-     * @param message to be printed along with a new line
-     */
     private static void print(String message){
         System.out.println(message);
     }
 
-    /**
-     * Simple wrapper string to print given message in a unique way.
-     * String is framed simulating a GUI pop-up window.
-     * Should be used for any message that must stand out.
-     * @param message to be printed in a pop-up frame.
-     */
+
     private static void popup(String message){
         int len = message.length();
         System.out.print("+");
@@ -57,22 +48,14 @@ public class MailClient {
         System.out.print("+\n");
     }
 
-    /**
-     * Simple substitute (alias) to Scanner.nextLine().
-     * Prompts user with a special symbol to enter some text.
-     * @return tex entered by user without trailing new-line character.
-     */
+
     private static String read(){
         System.out.print(">>> ");
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
     }
 
-    /**
-     * Closes connection and farwells user
-     * @param socket of current connection
-     * @param dos output stream of current connection
-     */
+
     private static void exit(Socket socket, DataOutputStream dos){
         try {
             dos.writeUTF("exit");
@@ -84,9 +67,6 @@ public class MailClient {
         System.exit(0);
     }
 
-    /**
-     * Simple output function that informs a guest user with available commands.
-     */
     private static void printGuestMenu(){
         print("=========");
         print("o| LogIn");
@@ -95,9 +75,7 @@ public class MailClient {
         print("=========");
     }
 
-    /**
-     * Simple output function that informs a logged-in user with available commands.
-     */
+
     private static void printUserMenu(){
         print("===============");
         print("o| NewEmail");
@@ -109,12 +87,7 @@ public class MailClient {
         print("===============");
     }
 
-    /**
-     * Implements the client's side protocol when user is connected as guest.
-     * @param socket of current connection
-     * @param dis input stream of current connection
-     * @param dos output stream of current connection
-     */
+
     private static void guestSession(Socket socket, DataInputStream dis, DataOutputStream dos){
         String request;
         String response;
@@ -194,13 +167,7 @@ public class MailClient {
         }
     }
 
-    /**
-     * Implements the client's side protoco when user is logged-in.
-     * @param username of currently logged in user
-     * @param socket of current connection
-     * @param dis input stream of current connection
-     * @param dos output stream of current connection
-     */
+
     private static void userSession(String username, Socket socket, DataInputStream dis, DataOutputStream dos){
         String request;
         String response;

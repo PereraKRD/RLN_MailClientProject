@@ -1,6 +1,4 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -38,9 +36,9 @@ public class RLN_MailServer{
         while(true) {
             try {
                 socket = serverSocket.accept();
-                DataInputStream dis = new DataInputStream(socket.getInputStream());
-                DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-                Thread thread = new ServerThread(server, dis, dos);
+                PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
+                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                Thread thread = new ServerThread(server, in, out);
                 thread.start();
 
             } catch (Exception e) {
