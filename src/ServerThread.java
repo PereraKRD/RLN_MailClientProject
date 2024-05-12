@@ -2,7 +2,7 @@ import java.io.*;
 
 
 class ServerThread extends Thread{
-    private static int clientCount = 0;
+    private static int clientCount = 1;
     final private int clientId;
     final private RLN_MailServer server;
     final private DataOutputStream dos;

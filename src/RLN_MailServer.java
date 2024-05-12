@@ -53,17 +53,17 @@ public class RLN_MailServer{
         register("lasith@rln.com", "123456");
         register("nithil@rln.com", "123456");
 
-        newEmail("ryan@rln.com", "lasith@rln.com", "Spam", "Hey there!\nThis is spam!\n");
-        newEmail("ryan@rln.com", "admin@rln.com", "Spam", "Hey there!\nThis is spam!\n");
-        newEmail("ryan@rln.com", "nithil@rln.com", "Spam", "Hey there!\nThis is spam!\n");
+        newEmail("ryan@rln.com", "lasith@rln.com", "Spam", "Hey there!\n");
+        newEmail("ryan@rln.com", "admin@rln.com", "Spam", "Hey there!\n");
+        newEmail("ryan@rln.com", "nithil@rln.com", "Spam", "Hey there!\n");
 
         newEmail("lasith@rln.com", "ryan@rln.com", "foo", "bar\n");
         newEmail("lasith@rln.com", "nithil@rln.com", "baz", "fizz\n");
         newEmail("lasith@rln.com", "admin@rln.com", "fuzz", "Lorem ipsum and stuff...\n");
 
-        newEmail("nithil@rln.com", "lasith@rln.com", "Spam", "Hey there!\nThis is spam!\n");
-        newEmail("nithil@rln.com", "admin@rln.com", "Spam", "Hey there!\nThis is spam!\n");
-        newEmail("nithil@rln.com", "ryan@rln.com", "Spam", "Hey there!\nThis is spam!\n");
+        newEmail("nithil@rln.com", "lasith@rln.com", "Spam", "Hey there!\n");
+        newEmail("nithil@rln.com", "admin@rln.com", "Spam", "Hey there!\n");
+        newEmail("nithil@rln.com", "ryan@rln.com", "Spam", "Hey there!\n");
 
     }
 
@@ -90,7 +90,7 @@ public class RLN_MailServer{
         return false;
     }
 
-    
+
 
 
     boolean newEmail(String sender, String receiver, String subject, String mainBody){
